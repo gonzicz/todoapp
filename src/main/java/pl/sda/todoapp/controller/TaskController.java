@@ -4,14 +4,12 @@ import org.springframework.web.bind.annotation.*;
 import pl.sda.todoapp.dto.CreateTaskDTO;
 import pl.sda.todoapp.dto.TaskDTO;
 import pl.sda.todoapp.dto.TaskMapper;
+import pl.sda.todoapp.dto.UpdateTaskDTO;
 import pl.sda.todoapp.model.Status;
-import pl.sda.todoapp.model.Task;
 import pl.sda.todoapp.model.Type;
 import pl.sda.todoapp.model.User;
 import pl.sda.todoapp.repository.TaskRepository;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -31,27 +29,47 @@ public class TaskController {
         return taskMapper.toDto(taskRepository.save(taskMapper.model(taskDTO)));
     }
 
+    @GetMapping
+    Stream<TaskDTO> getAllTasks() {
+        return taskRepository.findAll().stream().map(taskMapper::toDto);
+    }
+
     @GetMapping("/{id}")
-    Optional<TaskDTO> findTaskById(@PathVariable long id){
-        return taskRepository.findById(id).map(task->taskMapper.toDto(task));
+    Optional<TaskDTO> findTaskById(@PathVariable long id) {
+        return taskRepository.findById(id).map(task -> taskMapper.toDto(task));
     }
 
     @GetMapping(params = "user")
-    Stream<TaskDTO> getAllTasksUser(@RequestParam ("user") long id){
-        return taskRepository.findByUserId(id).stream().map(task->taskMapper.toDto(task));
+    Stream<TaskDTO> getAllTasksUser(@RequestParam("user") long id) {
+        return taskRepository.findByUserId(id).stream().map(task -> taskMapper.toDto(task));
     }
 
     @GetMapping(params = {"user", "status"})
-    Stream<TaskDTO> getAllTasksUserByStatus(@RequestParam("user") long id,@RequestParam("status") Status status){
+    Stream<TaskDTO> getAllTasksUserByStatus(@RequestParam("user") long id, @RequestParam("status") Status status) {
         return taskRepository.findByUserIdAndStatus(id, status).stream().map(taskMapper::toDto);
     }
 
     @GetMapping(params = {"user", "type"})
-    Stream<TaskDTO> getAllTasksUserByType(@RequestParam("user") long id,@RequestParam("type") Type type){
+    Stream<TaskDTO> getAllTasksUserByType(@RequestParam("user") long id, @RequestParam("type") Type type) {
         return taskRepository.findByUserIdAndType(id, type).stream().map(taskMapper::toDto);
     }
 
-    @PutMapping("/{id}")
-    
+    @PutMapping(value = "/{id}")
+    void updateTask(@PathVariable Long id, @RequestBody UpdateTaskDTO updateTaskDTO) {
+        taskRepository.findById(id).ifPresent(task -> {
+            task.setTitle(updateTaskDTO.getTitle());
+            task.setStatus(updateTaskDTO.getStatus());
+            task.setType(updateTaskDTO.getType());
+            taskRepository.save(task);
+        });
+    }
+
+    @PutMapping(value = "/{taskId}/user")
+    public void updateUser(@PathVariable long taskId, @RequestBody User newUser) {
+        taskRepository.findById(taskId).ifPresent(task -> {
+            task.setUser(newUser);
+            taskRepository.save(task);
+        });
+    }
 
 }
