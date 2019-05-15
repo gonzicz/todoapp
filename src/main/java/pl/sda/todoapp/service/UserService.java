@@ -32,7 +32,7 @@ public class UserService {
     }
 
     /**
-     *  @Transactional, taskRepository.deleteByUserId(id)  oraz taskRepository.deleteById()
+     *  @Transactional, taskRepository.deleteByUserId(id)  oraz taskRepository.deleteById() [ w klasie TaskRepository ]
      *  możemy zakomentować ponieważ używamy kaskad
      */
     // @Transactional
