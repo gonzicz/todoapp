@@ -1,12 +1,14 @@
 package pl.sda.todoapp.model;
 
 import lombok.Data;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
 @Entity
+@ToString(exclude = "tasks")
 public class User {
     @Id
     @GeneratedValue
