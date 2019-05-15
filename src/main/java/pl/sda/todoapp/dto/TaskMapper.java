@@ -32,4 +32,12 @@ public class TaskMapper {
         taskDto.setUserId(task.getUser().getId());
         return taskDto;
     }
+
+    public Task model(UpdateTaskDTO updateTaskDTO) {
+        Task task = new Task();
+        task.setTitle(updateTaskDTO.getTitle());
+        task.setStatus(updateTaskDTO.getStatus());
+        task.setType(updateTaskDTO.getType());
+        return task;
+    }
 }
